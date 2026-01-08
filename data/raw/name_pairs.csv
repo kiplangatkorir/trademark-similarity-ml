@@ -1,21 +1,98 @@
 name_1,name_2,label
 ApplePay,Apple Pay,1
+Apple,Appl,1
+Apple,Aple,1
+Apple,Pineapple,0
+Google,Gooogle,1
+Google,Gogle,1
 Google,Alphabet,0
-Coca Cola,Coca-Cola,1
-Microsoft Windows,Microsoft Word,0
-Nike,Niike,1
-Samsung,Samsing,1
+Google,Googol,0
+Microsoft,Microsof,1
+Microsoft,Macrosoft,1
+Microsoft,Microsystems,0
+Windows,Windos,1
+Windows,Windowz,1
+Windows,Microsoft Word,0
 Amazon,Amazone,1
-Tesla,Tezla,0
-PayPal,Paypaul,1
-Spotify,Spotifai,0
-Instagram,Instagrum,1
+Amazon,Amason,1
+Amazon,Amazonia,0
+Amazon,Prime Video,0
 Facebook,Facebok,1
-Twitter,Twiter,0
-LinkedIn,LinkedIN,0
-Uber,Ufer,0
+Facebook,Faceboook,1
+Facebook,Meta,0
+Meta,Meeta,1
+Meta,Metta,1
+Meta,Metaverse,0
+Instagram,Instagrum,1
+Instagram,Instagraam,1
+Instagram,InstaGram,1
+Instagram,WhatsApp,0
+WhatsApp,Whatsup,1
+WhatsApp,Whatzapp,1
+WhatsApp,Telegram,0
+Twitter,Twiter,1
+Twitter,Twitterr,1
+Twitter,X,0
+LinkedIn,LinkedIN,1
+LinkedIn,LinkdIn,1
+LinkedIn,Indeed,0
+Netflix,Netfliix,1
+Netflix,Netflex,1
+Netflix,Prime Video,0
+Tesla,Tezla,1
+Tesla,Teslaa,1
+Tesla,SpaceX,0
+SpaceX,Space-X,1
+SpaceX,SpaceEks,1
+SpaceX,Blue Origin,0
+Nike,Niike,1
+Nike,Nikey,1
+Nike,Adidas,0
+Adidas,Adiddas,1
+Adidas,Addidas,1
+Adidas,Puma,0
+Samsung,Samsing,1
+Samsung,Samsang,1
+Samsung,Galaxy,0
+Sony,Soni,1
+Sony,Sonny,1
+Sony,PlayStation,0
+PlayStation,Play Station,1
+PlayStation,PlaiStation,1
+PlayStation,Xbox,0
+Uber,Ufer,1
+Uber,Ubar,1
+Uber,Lyft,0
 Airbnb,AirBnB,1
+Airbnb,Airnbb,1
+Airbnb,Booking.com,0
+Booking,Bookin,1
+Booking,Bookking,1
+Booking,Expedia,0
+PayPal,Paypaul,1
+PayPal,Pay Pall,1
+PayPal,Stripe,0
+Stripe,Strype,1
+Stripe,Strip,0
+Visa,Viza,1
+Visa,Vista,0
+Mastercard,Master Card,1
+Mastercard,Masterkard,1
+Mastercard,Visa,0
+Zoom,Zume,1
+Zoom,Zoome,1
+Zoom,Teams,0
+Slack,Slak,1
+Slack,Slacc,1
+Slack,Discord,0
 Dropbox,DropBox,1
-Slack,Slak,0
-Zoom,Zume,0
+Dropbox,Dropboks,1
+Dropbox,Google Drive,0
 Reddit,Reditt,1
+Reddit,Readit,1
+Reddit,Quora,0
+Spotify,Spotifai,1
+Spotify,Spotyfy,1
+Spotify,Apple Music,0
+TikTok,Tik Tok,1
+TikTok,TikTokk,1
