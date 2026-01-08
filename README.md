@@ -2,6 +2,8 @@
 
 A machine learning model to detect confusingly similar trademark names.
 
+🌐 **Live API:** [https://trademark-similarity-ml.onrender.com/](https://trademark-similarity-ml.onrender.com/)
+
 ## Overview
 
 This project trains a classifier to identify pairs of names that are confusingly similar for trademark purposes. The model uses character n-gram TF-IDF features with Logistic Regression or Gradient Boosting for classification.
@@ -102,7 +104,16 @@ The model now uses 8 features:
 
 ## Deployment on Render
 
-This application can be deployed on Render as a web service. The Flask API provides REST endpoints for trademark similarity predictions.
+This application is deployed on Render as a web service. The Flask API provides REST endpoints for trademark similarity predictions.
+
+### 🌐 Live Deployment
+
+**The API is live and available at:** [https://trademark-similarity-ml.onrender.com/](https://trademark-similarity-ml.onrender.com/)
+
+You can:
+- Visit the URL in your browser to access the interactive web interface
+- Use the API endpoints programmatically (see examples below)
+- Test predictions directly from the web interface
 
 ### Prerequisites
 
@@ -122,7 +133,7 @@ This application can be deployed on Render as a web service. The Flask API provi
 3. **Configure the service:**
    - **Name**: trademark-similarity-api (or your preferred name)
    - **Environment**: Python 3
-   - **Build Command**: `pip install -r requirements.txt`
+   - **Build Command**: `pip install --upgrade pip && pip install -r requirements.txt`
    - **Start Command**: `gunicorn app:app`
    - **Instance Type**: Free tier is sufficient
 
@@ -132,7 +143,7 @@ This application can be deployed on Render as a web service. The Flask API provi
 
 ### API Endpoints
 
-Once deployed, your API will be available at `https://your-app-name.onrender.com`
+The API is available at: **https://trademark-similarity-ml.onrender.com**
 
 #### Health Check
 ```bash
@@ -175,9 +186,18 @@ Content-Type: application/json
 }
 ```
 
-### Testing the API Locally
+### Testing the API
 
-Before deploying, test the API locally:
+#### Using the Live API
+
+The easiest way to test the API is using the live deployment:
+
+1. **Visit the web interface:** [https://trademark-similarity-ml.onrender.com/](https://trademark-similarity-ml.onrender.com/)
+2. Use the interactive form to test predictions directly in your browser
+
+#### Testing Locally
+
+Before deploying, you can also test the API locally:
 
 ```bash
 # Install dependencies
@@ -195,6 +215,23 @@ Then test with curl:
 curl -X POST http://localhost:5000/predict \
   -H "Content-Type: application/json" \
   -d '{"name_1": "ApplePay", "name_2": "Apple Pay"}'
+```
+
+#### Testing the Live API with curl
+
+```bash
+# Single prediction
+curl -X POST https://trademark-similarity-ml.onrender.com/predict \
+  -H "Content-Type: application/json" \
+  -d '{"name_1": "ApplePay", "name_2": "Apple Pay"}'
+
+# Batch prediction
+curl -X POST https://trademark-similarity-ml.onrender.com/predict/batch \
+  -H "Content-Type: application/json" \
+  -d '{"pairs": [{"name_1": "ApplePay", "name_2": "Apple Pay"}, {"name_1": "Google", "name_2": "Alphabet"}]}'
+
+# Health check
+curl https://trademark-similarity-ml.onrender.com/health
 ```
 
 ### Environment Variables (Optional)
