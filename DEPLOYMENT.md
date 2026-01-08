@@ -50,8 +50,8 @@ git push
    - **Region**: Choose closest to you
    - **Branch**: `main` (or your default branch)
    - **Root Directory**: (leave empty)
-   - **Environment**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
+   - **Environment**: `Python 3` (will use Python 3.12 from runtime.txt)
+   - **Build Command**: `pip install --upgrade pip && pip install -r requirements.txt`
    - **Start Command**: `gunicorn app:app`
 
 5. **Optional: Set Environment Variables**
