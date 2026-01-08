@@ -9,7 +9,7 @@ from src.data_prep import load_and_prepare
 from src.features import compute_features
 
 
-def train_model(X_train, y_train, model_path='models/trademark_similarity_model.pkl'):
+def train_model(X_train, y_train, model_path='models/trademark_similarity_model.pkl', vectorizer_path='models/trademark_similarity_vectorizer.pkl'):
     """
     Train Logistic Regression with class weight balancing.
     
@@ -17,9 +17,11 @@ def train_model(X_train, y_train, model_path='models/trademark_similarity_model.
         X_train: Feature matrix (n, num_features)
         y_train: Labels (n,)
         model_path: Where to save the model
+        vectorizer_path: Where to save the vectorizer
     
     Returns:
         model: Trained classifier
+        vectorizer: Fitted vectorizer (for inference)
     """
     # Compute class weights to handle imbalance
     classes = np.unique(y_train)
@@ -41,6 +43,18 @@ def train_model(X_train, y_train, model_path='models/trademark_similarity_model.
     return model
 
 
+def save_vectorizer(vectorizer, vectorizer_path='models/trademark_similarity_vectorizer.pkl'):
+    """
+    Save the vectorizer for later use in inference.
+    
+    Args:
+        vectorizer: Fitted vectorizer
+        vectorizer_path: Where to save the vectorizer
+    """
+    joblib.dump(vectorizer, vectorizer_path)
+    print(f"Vectorizer saved to {vectorizer_path}")
+
+
 if __name__ == '__main__':
     # Full pipeline: prepare data, compute features, train
     print("Loading and preparing data...")
@@ -52,6 +66,10 @@ if __name__ == '__main__':
     print("Training model...")
     model = train_model(features_train, y_train)
     
+    print("Saving vectorizer...")
+    save_vectorizer(vectorizer)
+    
     print("Training complete.")
+    print(f"Feature shape: {features_train.shape}")
     print(f"Model coefficients shape: {model.coef_.shape}")
     print(f"Class weights used: balanced (to handle imbalance)")

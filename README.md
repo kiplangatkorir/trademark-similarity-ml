@@ -22,7 +22,10 @@ python -m src.train
 python -m src.evaluate
 
 # Make predictions
-python -m src.predict
+python -m src.predict "ApplePay" "Apple Pay"
+
+# Batch predictions from CSV
+python -m src.batch_predict input.csv output.csv
 ```
 
 ## Project Structure
@@ -45,15 +48,54 @@ Labels: `1 = confusingly similar`, `0 = not similar`
 
 ## Model
 
-- **Features**: Character n-gram (2-3) TF-IDF
-- **Algorithm**: Logistic Regression
-- **Metric**: F1 score (weighted for class imbalance)
+- **Features**: 
+  - TF-IDF cosine similarity (character n-grams 2-3)
+  - Edit distance (normalized Levenshtein)
+  - Jaccard similarity (2-grams and 3-grams)
+  - Sequence ratio (difflib)
+  - Length ratio and difference
+  - Common prefix ratio
+- **Algorithm**: Logistic Regression with class balancing
+- **Metrics**: Accuracy, Precision, Recall, F1, ROC-AUC, PR-AUC
 
 ## Usage
+
+### Single Prediction
 
 ```python
 from src.predict import predict
 
-score, decision = predict("ApplePay", "Apple Pay")
-print(f"Similarity: {score:.3f}, Similar: {decision}")
+decision, confidence, features = predict("ApplePay", "Apple Pay")
+print(f"Similar: {decision}, Confidence: {confidence:.3f}")
 ```
+
+### Command Line
+
+```bash
+# Single prediction
+python -m src.predict "ApplePay" "Apple Pay"
+
+# Batch predictions from CSV
+python -m src.batch_predict data/input.csv data/output.csv
+```
+
+The batch prediction script expects a CSV with `name_1` and `name_2` columns and outputs predictions with confidence scores.
+
+## Features
+
+### Enhanced Feature Engineering
+
+The model now uses 8 features:
+1. **TF-IDF Cosine Similarity**: Character n-gram (2-3) based similarity
+2. **Edit Distance**: Normalized Levenshtein distance
+3. **Jaccard Similarity (2-grams)**: Set-based similarity on character 2-grams
+4. **Jaccard Similarity (3-grams)**: Set-based similarity on character 3-grams
+5. **Sequence Ratio**: difflib-based sequence matching
+6. **Length Ratio**: Ratio of minimum to maximum length
+7. **Prefix Ratio**: Ratio of common prefix length
+8. **Length Difference**: Absolute difference in name lengths
+
+### Model Artifacts
+
+- `models/trademark_similarity_model.pkl`: Trained classifier
+- `models/trademark_similarity_vectorizer.pkl`: Fitted TF-IDF vectorizer (required for inference)

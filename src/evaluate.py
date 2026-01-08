@@ -1,6 +1,10 @@
-"""Model evaluation: precision, recall, F1, confusion matrix."""
+"""Model evaluation: comprehensive metrics including ROC-AUC, PR-AUC."""
 
-from sklearn.metrics import precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.metrics import (
+    precision_score, recall_score, f1_score, accuracy_score,
+    confusion_matrix, roc_auc_score, average_precision_score,
+    classification_report
+)
 import numpy as np
 import joblib
 
@@ -10,7 +14,7 @@ from src.features import compute_features
 
 def evaluate_model(model, X_test, y_test):
     """
-    Compute key evaluation metrics.
+    Compute comprehensive evaluation metrics.
     
     Args:
         model: Trained classifier
@@ -18,26 +22,48 @@ def evaluate_model(model, X_test, y_test):
         y_test: True labels
     
     Returns:
-        metrics: Dict with precision, recall, f1, cm
+        metrics: Dict with precision, recall, f1, accuracy, roc_auc, pr_auc, cm
+        y_pred: Predicted labels
+        y_proba: Predicted probabilities
     """
     y_pred = model.predict(X_test)
+    y_proba = model.predict_proba(X_test)[:, 1]  # Probability of positive class
     
     metrics = {
+        'accuracy': accuracy_score(y_test, y_pred),
         'precision': precision_score(y_test, y_pred, zero_division=0),
         'recall': recall_score(y_test, y_pred, zero_division=0),
         'f1': f1_score(y_test, y_pred, zero_division=0),
         'confusion_matrix': confusion_matrix(y_test, y_pred)
     }
     
-    return metrics, y_pred
+    # Add AUC metrics if we have both classes in test set
+    if len(np.unique(y_test)) > 1:
+        try:
+            metrics['roc_auc'] = roc_auc_score(y_test, y_proba)
+            metrics['pr_auc'] = average_precision_score(y_test, y_proba)
+        except ValueError:
+            metrics['roc_auc'] = None
+            metrics['pr_auc'] = None
+    else:
+        metrics['roc_auc'] = None
+        metrics['pr_auc'] = None
+    
+    return metrics, y_pred, y_proba
 
 
 def print_metrics(metrics):
     """Pretty-print evaluation results."""
     print("\n=== Model Evaluation ===")
+    print(f"Accuracy:  {metrics['accuracy']:.3f}")
     print(f"Precision: {metrics['precision']:.3f}")
     print(f"Recall:    {metrics['recall']:.3f}")
     print(f"F1 Score:  {metrics['f1']:.3f}")
+    
+    if metrics['roc_auc'] is not None:
+        print(f"ROC-AUC:   {metrics['roc_auc']:.3f}")
+        print(f"PR-AUC:    {metrics['pr_auc']:.3f}")
+    
     print("\nConfusion Matrix:")
     cm = metrics['confusion_matrix']
     print(f"  TN: {cm[0, 0]}, FP: {cm[0, 1]}")
@@ -57,5 +83,5 @@ if __name__ == '__main__':
     model = joblib.load('models/trademark_similarity_model.pkl')
     
     print("Evaluating...")
-    metrics, y_pred = evaluate_model(model, features_test, y_test)
+    metrics, y_pred, y_proba = evaluate_model(model, features_test, y_test)
     print_metrics(metrics)
