@@ -99,3 +99,107 @@ The model now uses 8 features:
 
 - `models/trademark_similarity_model.pkl`: Trained classifier
 - `models/trademark_similarity_vectorizer.pkl`: Fitted TF-IDF vectorizer (required for inference)
+
+## Deployment on Render
+
+This application can be deployed on Render as a web service. The Flask API provides REST endpoints for trademark similarity predictions.
+
+### Prerequisites
+
+1. Ensure the model is trained locally and the model files exist in the `models/` directory
+2. Commit the model files to your repository (they should NOT be in `.gitignore`)
+3. Have a Render account (free tier available)
+
+### Deployment Steps
+
+1. **Push your code to GitHub/GitLab/Bitbucket**
+
+2. **Connect to Render:**
+   - Go to [render.com](https://render.com)
+   - Click "New +" → "Web Service"
+   - Connect your repository
+
+3. **Configure the service:**
+   - **Name**: trademark-similarity-api (or your preferred name)
+   - **Environment**: Python 3
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `gunicorn app:app`
+   - **Instance Type**: Free tier is sufficient
+
+4. **Deploy:**
+   - Click "Create Web Service"
+   - Render will automatically build and deploy your application
+
+### API Endpoints
+
+Once deployed, your API will be available at `https://your-app-name.onrender.com`
+
+#### Health Check
+```bash
+GET /
+GET /health
+```
+
+#### Single Prediction
+```bash
+POST /predict
+Content-Type: application/json
+
+{
+  "name_1": "ApplePay",
+  "name_2": "Apple Pay"
+}
+```
+
+Response:
+```json
+{
+  "name_1": "ApplePay",
+  "name_2": "Apple Pay",
+  "is_similar": true,
+  "confidence": 0.804,
+  "prediction": 1
+}
+```
+
+#### Batch Prediction
+```bash
+POST /predict/batch
+Content-Type: application/json
+
+{
+  "pairs": [
+    {"name_1": "ApplePay", "name_2": "Apple Pay"},
+    {"name_1": "Google", "name_2": "Alphabet"}
+  ]
+}
+```
+
+### Testing the API Locally
+
+Before deploying, test the API locally:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the Flask app
+python app.py
+
+# Or use gunicorn (production server)
+gunicorn app:app
+```
+
+Then test with curl:
+```bash
+curl -X POST http://localhost:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"name_1": "ApplePay", "name_2": "Apple Pay"}'
+```
+
+### Environment Variables (Optional)
+
+You can set these in Render's dashboard if you have custom model paths:
+- `MODEL_PATH`: Path to model file (default: `models/trademark_similarity_model.pkl`)
+- `VECTORIZER_PATH`: Path to vectorizer file (default: `models/trademark_similarity_vectorizer.pkl`)
+- `PORT`: Port number (automatically set by Render)
