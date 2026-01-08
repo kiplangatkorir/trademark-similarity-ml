@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trademark Similarity ML API</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .endpoint {
+            background: #f9f9f9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        .endpoint h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px 10px 0;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .example {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏷️ Trademark Similarity ML API</h1>
+        <p>Test the API endpoints below. All endpoints accept and return JSON.</p>
+
+        <div class="endpoint">
+            <h3>Health Check</h3>
+            <p>Check if the API is running and models are loaded.</p>
+            <button onclick="checkHealth()">Check Health</button>
+            <div id="healthResult"></div>
+        </div>
+
+        <div class="endpoint">
+            <h3>Single Prediction</h3>
+            <p>Predict similarity between two trademark names.</p>
+            <input type="text" id="name1" placeholder="First name (e.g., ApplePay)" value="ApplePay">
+            <input type="text" id="name2" placeholder="Second name (e.g., Apple Pay)" value="Apple Pay">
+            <button onclick="predictSingle()">Predict Similarity</button>
+            <div id="predictResult"></div>
+        </div>
+
+        <div class="endpoint">
+            <h3>Batch Prediction</h3>
+            <p>Predict similarity for multiple pairs at once.</p>
+            <textarea id="batchInput" rows="6" style="width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: 'Courier New', monospace;">[
+  {"name_1": "ApplePay", "name_2": "Apple Pay"},
+  {"name_1": "Google", "name_2": "Alphabet"},
+  {"name_1": "Microsoft", "name_2": "Microsof"}
+]</textarea>
+            <button onclick="predictBatch()">Predict Batch</button>
+            <div id="batchResult"></div>
+        </div>
+
+        <div class="example">
+            <h3>📚 API Documentation</h3>
+            <p><strong>Base URL:</strong> <code id="baseUrl"></code></p>
+            <ul>
+                <li><strong>GET</strong> <code>/health</code> - Health check</li>
+                <li><strong>POST</strong> <code>/predict</code> - Single prediction</li>
+                <li><strong>POST</strong> <code>/predict/batch</code> - Batch predictions</li>
+            </ul>
+            <p>See the README for detailed API documentation.</p>
+        </div>
+    </div>
+
+    <script>
+        // Get current base URL
+        document.getElementById('baseUrl').textContent = window.location.origin;
+
+        async function checkHealth() {
+            const resultDiv = document.getElementById('healthResult');
+            resultDiv.innerHTML = '<div class="result">Checking...</div>';
+            
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                resultDiv.innerHTML = `<div class="result ${response.ok ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function predictSingle() {
+            const resultDiv = document.getElementById('predictResult');
+            const name1 = document.getElementById('name1').value.trim();
+            const name2 = document.getElementById('name2').value.trim();
+            
+            if (!name1 || !name2) {
+                resultDiv.innerHTML = '<div class="result error">Please enter both names</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="result">Predicting...</div>';
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name_1: name1,
+                        name_2: name2
+                    })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const result = `Similar: ${data.is_similar ? 'YES ✅' : 'NO ❌'}\nConfidence: ${(data.confidence * 100).toFixed(1)}%\n\nFull response:\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.innerHTML = `<div class="result success">${result}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">Error: ${error.message}</div>`;
+            }
+        }
+
+        async function predictBatch() {
+            const resultDiv = document.getElementById('batchResult');
+            const input = document.getElementById('batchInput').value.trim();
+            
+            resultDiv.innerHTML = '<div class="result">Predicting...</div>';
+            
+            try {
+                const pairs = JSON.parse(input);
+                const response = await fetch('/predict/batch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ pairs })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    let result = `Total: ${data.total} predictions\n\n`;
+                    data.results.forEach((r, i) => {
+                        if (r.error) {
+                            result += `${i + 1}. ${r.name_1} vs ${r.name_2}: ERROR - ${r.error}\n`;
+                        } else {
+                            result += `${i + 1}. ${r.name_1} vs ${r.name_2}: ${r.is_similar ? 'YES ✅' : 'NO ❌'} (${(r.confidence * 100).toFixed(1)}%)\n`;
+                        }
+                    });
+                    result += `\nFull response:\n${JSON.stringify(data, null, 2)}`;
+                    resultDiv.innerHTML = `<div class="result success">${result}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">Error: ${error.message}\n\nMake sure the JSON format is correct.</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
+
